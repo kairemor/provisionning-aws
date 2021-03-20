@@ -1,0 +1,132 @@
+
+POST http://localhost:4000
+Content-Type: application/json
+
+{
+  "projectName": "testpr",
+  "stack": "mern",
+  "instanceGroupName": "test5-vm",
+  "projectArchitecture": "micro",
+  "applicationType": "web",
+  "environment": "dev",
+  "SLA": 4,
+  "dataSize": "",
+  "dependencies": [
+    "nginx",
+    "nodejs",
+    "mongodb"
+  ],
+  "connectedApplications": [
+    "orange-money",
+    "gaia",
+    "orange-et-moi",
+    "agassi",
+    "nessico"
+  ],
+  "costEstimation": 777777,
+  "provider": "aws",
+  "numberOfVm": 1,
+  "cpu": 1,
+  "memory": 1024,
+  "disk": 10,
+  "osType": "debian-cloud",
+  "osImage": "debian-10",
+  "frontendOptions": {
+    "frontend_project_repository": "https://github.com/MDiakhate12/springboot-crudapi-frontend.git"
+  },
+  "backendOptions": {
+    "backend_db_uri": "mongodb+srv://Amet:amet@clusterprovisionning.3p11m.mongodb.net/diaf?retryWrites=true&w=majority",
+    "backend_port": 3000,
+    "backend_main_file": "index.js",
+    "backend_project_repository": "https://github.com/MDiakhate12/diaf.git"
+  }
+}
+
+###
+
+POST http://localhost:8080/register-vm
+Content-Type: application/json
+
+{
+  "projectName": "mor10",
+  "instanceGroupName": "mor10-vm",
+  "projectArchitecture": "micro",
+  "applicationType": "web",
+  "environment": "dev",
+  "SLA": 4,
+  "dataSize": "",
+  "dependencies": [
+    "nginx",
+    "nodejs",
+    "mongodb"
+  ],
+  "connectedApplications": [
+    "orange-money",
+    "gaia",
+    "orange-et-moi",
+    "agassi",
+    "nessico"
+  ],
+  "costEstimation": 777777,
+  "provider": "aws",
+  "numberOfVm": 1,
+  "cpu": 1,
+  "memory": 1024,
+  "disk": 10,
+  "osType": "debian-cloud",
+  "osImage": "debian-10",
+  "frontendOptions": {
+    "frontend_project_repository": "https://github.com/MDiakhate12/springboot-crudapi-frontend.git"
+  },
+  "backendOptions": {
+    "backend_db_uri": "mongodb+srv://Amet:amet@clusterprovisionning.3p11m.mongodb.net/diaf?retryWrites=true&w=majority",
+    "backend_port": 3000,
+    "backend_main_file": "index.js",
+    "backend_project_repository": "https://github.com/MDiakhate12/diaf.git"
+  }
+}
+
+###
+POST http://localhost:8080/create-vm
+Content-Type: application/json
+
+{
+  "projectName": "mor10",
+  "instanceGroupName": "mor10-vm",
+  "projectArchitecture": "micro",
+  "applicationType": "web",
+  "environment": "dev",
+  "SLA": 4,
+  "dataSize": "",
+  "dependencies": [
+    "nginx",
+    "nodejs",
+    "mongodb"
+  ],
+  "connectedApplications": [
+    "orange-money",
+    "gaia",
+    "orange-et-moi",
+    "agassi",
+    "nessico"
+  ],
+  "costEstimation": 777777,
+  "provider": "aws",
+  "numberOfVm": 1,
+  "cpu": 1,
+  "memory": 1024,
+  "disk": 10,
+  "osType": "debian-cloud",
+  "osImage": "debian-10",
+  "frontendOptions": {
+    "frontend_project_repository": "https://github.com/MDiakhate12/springboot-crudapi-frontend.git"
+  },
+  "backendOptions": {
+    "backend_db_uri": "mongodb+srv://Amet:amet@clusterprovisionning.3p11m.mongodb.net/diaf?retryWrites=true&w=majority",
+    "backend_port": 3000,
+    "backend_main_file": "index.js",
+    "backend_project_repository": "https://github.com/MDiakhate12/diaf.git"
+  }
+}
+
+###
