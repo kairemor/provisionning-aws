@@ -1,7 +1,7 @@
 const express = require('express')
 const cors = require('cors')
 const fs = require('fs')
-const util = require('util')
+// const util = require('util')
 const process = require('process')
 // const exec = util.promisify(require('child_process').exec)
 const PORT = process.env.PORT || 4000
@@ -20,7 +20,7 @@ const files = {
       'terraform/aws/dev/variables.tf',
       'modules/mysql/init-mysql.sh',
       'modules/angular/dev/init-angular.sh',
-      'modules/springboot/dev/init-spring-boot.sh',
+      'modules/springboot/dev/init-springboot.sh',
     ],
     prod: [
       'terraform/aws/prod/frontend.tf',
@@ -30,8 +30,8 @@ const files = {
       'terraform/aws/prod/main.tf',
       'terraform/aws/prod/outputs.tf',
       'terraform/aws/prod/terraform.tfvars',
-      'modules/angular/prod/deploy_angular.tpl',
-      'modules/springboot/prod/deploy_spring.tpl',
+      'modules/angular/prod/init-angular.tpl',
+      'modules/springboot/prod/init-springboot.tpl',
     ],
   },
   mern: {
@@ -51,7 +51,7 @@ const files = {
       'terraform/aws/prod/launch-conf.tf',
       'terraform/aws/prod/main.tf',
       'terraform/aws/prod/outputs.tf',
-      'terdeploy_spring.tplraform/aws/prod/terraform.tfvars',
+      'terraform/aws/prod/terraform.tfvars',
       'modules/react/prod/init-react.tpl',
       'modules/nodejs/prod/init-nodejs.tpl',
     ],
@@ -83,22 +83,36 @@ app.post('/', async (req, res) => {
       osType,
       osImage,
     } = req.body
+    const {
+      frontendOptions: { frontend_project_repository },
+    } = req.body
+    const {
+      backendOptions: {
+        backend_db_uri,
+        backend_port,
+        backend_main_file,
+        backend_project_repository,
+      },
+    } = req.body
 
-    let instance = {
-      number_of_vm: numberOfVm,
-      vm_group_name: instanceGroupName,
-      cpu: cpu,
-      memory: memory,
-      disk_size_gb: disk,
-      image_project: osType,
-      image_family: osImage,
-      application_type: applicationType,
-    }
-
-    const variable = {
-      backend_bash_path: 'init-nodejs.sh',
-      frontend_bash_path: 'init-react,sh',
-      database_bash_path: 'init-mongodb.sh',
+    // let instance = {
+    //   number_of_vm: numberOfVm,
+    //   vm_group_name: instanceGroupName,
+    //   cpu: cpu,
+    //   memory: memory,
+    //   disk_size_gb: disk,
+    //   image_project: osType,
+    //   image_family: osImage,
+    //   application_type: applicationType,
+    // }
+    
+    let variable = {
+      project_repository: frontend_project_repository,
+      front_project_name: parseGithubUrl(frontend_project_repository).repo,
+      jar_file_url: backend_project_repository,
+      main_file: backend_main_file,
+      db_uri: backend_db_uri,
+      backend_port,
     }
 
     let resourceName = instanceGroupName.replace(/-/g, '_').trim().toLowerCase()
@@ -109,43 +123,53 @@ app.post('/', async (req, res) => {
     // Creates a client
     const storage = new Storage()
 
-    // Download the files
-    files[stack][environment].map(async (file) => {
-      let destination = `./terraform/${file.substring(
-        file.lastIndexOf('/') + 1,
-        file.length,
-      )}`
-      try {
-        await storage
-          .bucket(templateRepository)
-          .file(file)
-          .download({ destination })
-        console.log(
-          `gs://${templateRepository}/${file} downloaded to ${destination}.`,
-        )
-      } catch (error) {
-        console.error(error)
+    Promise.all(
+      // Download the files
+      files[stack][environment].map(async (file) => {
+        let destination = `./terraform/${file.substring(
+          file.lastIndexOf('/') + 1,
+          file.length,
+        )}`
+        try {
+          await storage
+            .bucket(templateRepository)
+            .file(file)
+            .download({ destination })
+          console.log(
+            `gs://${templateRepository}/${file} downloaded to ${destination}.`,
+          )
+        } catch (error) {
+          console.error(error)
+        }
+      }),
+    ).then(() => {
+      // Create variable file
+      if (stack === 'mern') {
+        variable.backend_bash_path = 'init-nodejs.tpl'
+        variable.frontend_bash_path = 'init-react.tpl'
+        variable.back_project_name = parseGithubUrl(
+          backend_project_repository,
+        ).repo
+        if (environment === 'dev') {
+          variable.database_bash_path = 'init-mongodb.sh'
+        }
       }
-    })
-
-    // Create variable file
-    fs.writeFileSync(
-      `./terraform/${resourceName}.auto.tfvars.json`,
-      JSON.stringify(variable),
-    )
-    console.log(`Created file ${resourceName}.auto.tfvars.json from request...`)
-    let responseData
-    // // Execute Terraform
-    setTimeout(async () => {
+      fs.writeFileSync(
+        `./terraform/${resourceName}.auto.tfvars.json`,
+        JSON.stringify(variable),
+      )
+      console.log(
+        `Created file ${resourceName}.auto.tfvars.json from request...`,
+      )
+      let responseData
+      // Execute Terraform
       exec(
         `make terraform-apply RESOURCE_NAME=${resourceName}`,
-        (error, out, err) => {
+        (error) => {
           if (error) {
             console.log(`error: ${error.message}`)
             return
           }
-          console.log(out)
-          console.log(err)
           process.chdir('terraform')
           // Printing current directory
           console.log('current working directory: ' + process.cwd())
@@ -171,23 +195,23 @@ app.post('/', async (req, res) => {
                     let timestamp = Date.now()
 
                     // Import and remove each file one by one
-                    // files.forEach((file) => {
-                    //   if (!fs.statSync(`terraform/${file}`).isDirectory()) {
-                    //     let destination = `${instanceGroupName}-${projectName
-                    //       .replace(/ /g, '-')
-                    //       .trim()
-                    //       .toLowerCase()}-${timestamp}/${file}`
-                    //     storage
-                    //       .bucket(templateRegistry)
-                    //       .upload(`terraform/${file}`, { destination })
-                    //       .then((uploadedFile) => {
-                    //         console.log(`${file} uploaded successfuly`)
-                    //         // exec(`rm -rf terraform/${file}`)
-                    //       })
-                    //       .catch(console.error)
-                    //   }
-                    // })
-                    // await exec(`rm -rf terraform/.terraform`)
+                    files.forEach((file) => {
+                      if (!fs.statSync(`terraform/${file}`).isDirectory()) {
+                        let destination = `${instanceGroupName}-${projectName
+                          .replace(/ /g, '-')
+                          .trim()
+                          .toLowerCase()}-${timestamp}/${file}`
+                        storage
+                          .bucket(templateRegistry)
+                          .upload(`terraform/${file}`, { destination })
+                          .then((uploadedFile) => {
+                            console.log(`${file} uploaded successfuly`)
+                            // exec(`rm -rf terraform/${file}`)
+                          })
+                          .catch(console.error)
+                      }
+                    })
+                    await exec(`rm -rf terraform/.terraform`)
                   })
                   return res.send(responseData)
                 },
@@ -196,12 +220,26 @@ app.post('/', async (req, res) => {
           )
         },
       )
-    }, 3000)
+    })
   } catch (error) {
     console.error(error.message)
   }
 })
 
+const parseGithubUrl = (url) => {
+  var matches = url.match(/.*?github.com\/([\w]+)\/([\w-]+)/)
+  if (matches && matches.length == 3) {
+    return {
+      owner: matches[1],
+      repo: matches[2],
+    }
+  } else {
+    throw 'Invalid url'
+  }
+}
+
+
+
 app.listen(PORT, () => {
-  console.log('Listenning on port: ', PORT)
+  console.log('Listening on port: ', PORT)
 })

@@ -4,11 +4,11 @@ Content-Type: application/json
 
 {
   "projectName": "testpr",
-  "stack": "mern",
+  "stack": "sbam",
   "instanceGroupName": "test5-vm",
   "projectArchitecture": "micro",
   "applicationType": "web",
-  "environment": "dev",
+  "environment": "prod",
   "SLA": 4,
   "dataSize": "",
   "dependencies": [
@@ -32,13 +32,13 @@ Content-Type: application/json
   "osType": "debian-cloud",
   "osImage": "debian-10",
   "frontendOptions": {
-    "frontend_project_repository": "https://github.com/MDiakhate12/springboot-crudapi-frontend.git"
+    "frontend_project_repository": "https://github.com/kairemor/test-angu.git"
   },
   "backendOptions": {
     "backend_db_uri": "mongodb+srv://Amet:amet@clusterprovisionning.3p11m.mongodb.net/diaf?retryWrites=true&w=majority",
-    "backend_port": 3000,
+    "backend_port": 8090,
     "backend_main_file": "index.js",
-    "backend_project_repository": "https://github.com/MDiakhate12/diaf.git"
+    "backend_project_repository": "https://github.com/kairemor/spring-boot-dockerise/blob/master/cloud-devops-0.0.1-SNAPSHOT.jar?raw=true"
   }
 }
 
@@ -48,11 +48,12 @@ POST http://localhost:8080/register-vm
 Content-Type: application/json
 
 {
-  "projectName": "mor10",
-  "instanceGroupName": "mor10-vm",
+  "projectName": "mor13",
+  "instanceGroupName": "mor13-vm",
   "projectArchitecture": "micro",
   "applicationType": "web",
-  "environment": "dev",
+  "environment": "prod",
+  "stack": "mern",
   "SLA": 4,
   "dataSize": "",
   "dependencies": [
@@ -76,13 +77,13 @@ Content-Type: application/json
   "osType": "debian-cloud",
   "osImage": "debian-10",
   "frontendOptions": {
-    "frontend_project_repository": "https://github.com/MDiakhate12/springboot-crudapi-frontend.git"
+    "frontend_project_repository": "https://github.com/kairemor/react-todo-app.git"
   },
   "backendOptions": {
     "backend_db_uri": "mongodb+srv://Amet:amet@clusterprovisionning.3p11m.mongodb.net/diaf?retryWrites=true&w=majority",
     "backend_port": 3000,
-    "backend_main_file": "index.js",
-    "backend_project_repository": "https://github.com/MDiakhate12/diaf.git"
+    "backend_main_file": "./bin/www",
+    "backend_project_repository": "https://github.com/kairemor/polybot.git"
   }
 }
 
@@ -91,11 +92,12 @@ POST http://localhost:8080/create-vm
 Content-Type: application/json
 
 {
-  "projectName": "mor10",
-  "instanceGroupName": "mor10-vm",
+  "projectName": "mor13",
+  "instanceGroupName": "mor13-vm",
   "projectArchitecture": "micro",
   "applicationType": "web",
-  "environment": "dev",
+  "environment": "prod",
+  "stack": "mern",
   "SLA": 4,
   "dataSize": "",
   "dependencies": [
@@ -119,13 +121,13 @@ Content-Type: application/json
   "osType": "debian-cloud",
   "osImage": "debian-10",
   "frontendOptions": {
-    "frontend_project_repository": "https://github.com/MDiakhate12/springboot-crudapi-frontend.git"
+    "frontend_project_repository": "https://github.com/kairemor/react-todo-app.git"
   },
   "backendOptions": {
     "backend_db_uri": "mongodb+srv://Amet:amet@clusterprovisionning.3p11m.mongodb.net/diaf?retryWrites=true&w=majority",
     "backend_port": 3000,
-    "backend_main_file": "index.js",
-    "backend_project_repository": "https://github.com/MDiakhate12/diaf.git"
+    "backend_main_file": "./bin/www",
+    "backend_project_repository": "https://github.com/kairemor/polybot.git"
   }
 }
 
