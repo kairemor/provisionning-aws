@@ -1,10 +1,8 @@
 const express = require('express')
 const cors = require('cors')
 const fs = require('fs')
-// const util = require('util')
 const process = require('process')
-// const exec = util.promisify(require('child_process').exec)
-const PORT = process.env.PORT || 4000
+const PORT = process.env.http_port || 8080
 const { exec } = require('child_process')
 const app = express()
 
@@ -95,17 +93,6 @@ app.post('/', async (req, res) => {
       },
     } = req.body
 
-    // let instance = {
-    //   number_of_vm: numberOfVm,
-    //   vm_group_name: instanceGroupName,
-    //   cpu: cpu,
-    //   memory: memory,
-    //   disk_size_gb: disk,
-    //   image_project: osType,
-    //   image_family: osImage,
-    //   application_type: applicationType,
-    // }
-    
     let variable = {
       project_repository: frontend_project_repository,
       front_project_name: parseGithubUrl(frontend_project_repository).repo,
@@ -186,9 +173,9 @@ app.post('/', async (req, res) => {
                   responseData = JSON.parse(data.toString())
                   process.chdir('..')
                   // Export the generated terraform directory to template registry
-                  fs.readdir('./terraform/', (err, files) => {
+                  fs.readdir('./terraform/', (error$, files$) => {
                     if (err) {
-                      console.error(err)
+                      console.error(error$)
                       return
                     }
 
@@ -205,13 +192,13 @@ app.post('/', async (req, res) => {
                           .bucket(templateRegistry)
                           .upload(`terraform/${file}`, { destination })
                           .then((uploadedFile) => {
-                            console.log(`${file} uploaded successfuly`)
+                            console.log(`${file} uploaded successfully`)
                             // exec(`rm -rf terraform/${file}`)
                           })
                           .catch(console.error)
                       }
                     })
-                    await exec(`rm -rf terraform/.terraform`)
+                    exec(`rm -rf terraform/.terraform`)
                   })
                   return res.send(responseData)
                 },
@@ -234,7 +221,7 @@ const parseGithubUrl = (url) => {
       repo: matches[2],
     }
   } else {
-    throw 'Invalid url'
+    throw new Error("Bad URL")
   }
 }
 
