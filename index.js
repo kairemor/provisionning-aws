@@ -2,7 +2,7 @@ const express = require('express')
 const cors = require('cors')
 const fs = require('fs')
 const process = require('process')
-const PORT = process.env.http_port || 8080
+const PORT = process.env.http_port || 3000
 const { exec } = require('child_process')
 const app = express()
 
